@@ -1,0 +1,8 @@
+<div class="background w-full overflow-hidden fixed top-0 left-0 z-[-10]">
+  <div class="absolute inset-0 min-h-full">
+    <div class="bg-gradient-to-br from-blue-900 via-purple-800 to-black min-h-full w-full"></div>
+  </div>
+  <div class="bubbles">
+    <div *ngFor="let bubble of bubbles" [ngStyle]="bubble.style" class="bubble"></div>
+  </div>
+</div>
