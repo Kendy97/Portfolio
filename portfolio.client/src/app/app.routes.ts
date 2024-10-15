@@ -9,23 +9,29 @@ export const appRoutes: Routes = [
 
   {
     path: 'home',
-    component: HomeComponent
+    component: HomeComponent,
+    data: { animation: 'HomePage' }
   },
   {
     path: 'about',
-    component: AboutComponent
+    component: AboutComponent,
+    data: { animation: 'AboutPage' }
   },
   {
     path: 'skills',
     component: SkillsComponent
+    ,
+    data: { animation: 'SkillsPage' }
   },
   {
     path: 'work',
-    component: WorkComponent
+    component: WorkComponent,
+    data: { animation: 'WorkPage' }
   },
   {
     path: 'contact',
-    component: ContactComponent
+    component: ContactComponent,
+    data: { animation: 'contactPage' }
   },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: '/home' }

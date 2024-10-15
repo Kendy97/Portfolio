@@ -17,10 +17,26 @@ export class BackgroundComponent implements AfterViewInit {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    let colorValue = 130;
+    let increment = 0.1;  
+
     const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      colorValue += increment;
+      if (colorValue >= 130 || colorValue <= 80) {
+        increment = -increment;
+      }
+      const color = `rgb(${colorValue}, ${colorValue + 5}, ${colorValue + 20})`;
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       requestAnimationFrame(draw);
     };
+
     draw();
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
   }
+
+
 }

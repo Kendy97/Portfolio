@@ -1,0 +1,28 @@
+.typewriter {
+  border-right: 2px solid #ffffff; /* Migający kursor */
+  white-space: nowrap; /* Zapobiega łamaniu tekstu */
+  overflow: hidden; /* Ukrywa niepełny tekst */
+  display: inline-block;
+  width: 0; /* Początkowa szerokość */
+  animation: typing 4s steps(50, end) forwards, blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink-caret {
+  from, to {
+    border-color: transparent;
+  }
+
+  50% {
+    border-color: #ffffff;
+  }
+}
