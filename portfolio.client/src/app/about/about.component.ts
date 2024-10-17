@@ -17,6 +17,9 @@ export class AboutComponent implements AfterViewInit {
   Mam szeroką wiedzę na temat baz danych i umiejętność tworzenia złożonych zapytań, funkcji i procedur SQL, co pozwala mi efektywnie pracować z dużymi zbiorami danych. Obecnie rozwijam swoje umiejętności front-endowe, skupiając się na Angularze, aby dostarczać nowoczesne rozwiązania webowe.
   Chętnie podejmuję wyzwania wymagające połączenia różnych technologii, stale poszerzając swoją wiedzę, aby tworzyć wydajne, skalowalne aplikacje.`;
 
+  textEn: string = `I am a Fullstack developer with experience in .NET, taking my first steps in Angular. I specialize in creating solutions based on ASP.NET, both in MVC and ASPX models. I am proficient in designing and implementing web applications, integrating the frontend with the backend.
+  I have extensive knowledge of databases and the ability to create complex queries, functions, and SQL procedures, which allows me to work efficiently with large data sets.Currently, I am developing my frontend skills, focusing on Angular to deliver modern web solutions.
+  I enjoy taking on challenges that require combining different technologies, continuously expanding my knowledge to create efficient, scalable applications.`;
   ngAfterViewInit() {
     this.typeText();
   }
@@ -26,8 +29,8 @@ export class AboutComponent implements AfterViewInit {
     let index = 0;
 
     const typeInterval = setInterval(() => {
-      if (index < this.text.length) {
-        element.innerHTML += this.text.charAt(index);
+      if (index < this.textEn.length) {
+        element.innerHTML += this.textEn.charAt(index);
         index++;
       } else {
         clearInterval(typeInterval);

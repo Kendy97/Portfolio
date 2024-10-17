@@ -11,13 +11,14 @@ import { BackgroundComponent } from './background/background.component';
 import { ContactComponent } from './contact/contact.component';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SocialComponent } from './social/social.component';
 
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
-  imports: [HeaderComponent, RouterOutlet, SkillsComponent, HomeComponent, WorkComponent, AboutComponent, BackgroundComponent, ContactComponent],
+  imports: [HeaderComponent, RouterOutlet, SkillsComponent, HomeComponent, WorkComponent, AboutComponent, BackgroundComponent, ContactComponent,SocialComponent],
   standalone: true,
   animations: [
     trigger('routeAnimations', [

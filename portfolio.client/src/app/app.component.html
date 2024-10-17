@@ -1,11 +1,18 @@
-<app-header></app-header>
+
+<div class="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8">
+  <div></div>
+  <div>
+    <app-header></app-header>
+  </div>
+  <div>
+    <app-social></app-social>
+  </div>
+</div>
+
 <app-background></app-background>
 
-
-    <div class="pt-24 space-y-32">
-      <div [@routeAnimations]="prepareRoute(outlet)">
-        <router-outlet #outlet="outlet"></router-outlet>
-      </div>
-    </div>
- 
-
+<div class="py-12">
+<div [@routeAnimations]="prepareRoute(outlet)">
+  <router-outlet #outlet="outlet"></router-outlet>
+</div>
+</div>

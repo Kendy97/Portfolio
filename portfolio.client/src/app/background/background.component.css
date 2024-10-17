@@ -4,11 +4,11 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -1; /* Ustawienie tła za wszystkimi elementami */
-  pointer-events: none; /* Zapobiega interakcji użytkownika z płótnem */
+  z-index: -1; 
+  pointer-events: none; 
 }
 
 .content {
   position: relative;
-  z-index: 1; /* Elementy zawartości będą na wierzchu */
+  z-index: 1; 
 }
