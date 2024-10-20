@@ -1,0 +1,23 @@
+@keyframes wave {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(-20deg);
+  }
+
+  75% {
+    transform: rotate(20deg);
+  }
+}
+
+.waving-hand {
+  animation: wave 1.5s ease-in-out infinite;
+  transform-origin: 70% 70%;
+}
+.typed-cursor {
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #5651e5;
+}

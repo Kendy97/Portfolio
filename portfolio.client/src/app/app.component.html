@@ -5,14 +5,15 @@
     <app-header></app-header>
   </div>
   <div>
-    <app-social></app-social>
+
   </div>
 </div>
 
 <app-background></app-background>
 
 <div class="py-12">
-<div [@routeAnimations]="prepareRoute(outlet)">
-  <router-outlet #outlet="outlet"></router-outlet>
+  <div [@routeAnimations]="prepareRoute(outlet)">
+    <router-outlet #outlet="outlet"></router-outlet>
+  </div>
 </div>
-</div>
+
