@@ -34,6 +34,5 @@ export const appRoutes: Routes = [
     data: { animation: 'contactPage' }
   },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
-  { path: '**', redirectTo: '/home' }
-
+  { path: '**', redirectTo: '/home', pathMatch: 'full' }
 ];

@@ -34,7 +34,7 @@ export class HomeComponent implements AfterViewInit {
       renderer: 'svg',
       loop: true,
       autoplay: true,
-      path: '/animation_1729424211354.json'
+      path: '/assets/animation_1729424211354.json'
     });
   }
 }

@@ -13,7 +13,6 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SocialComponent } from './social/social.component';
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -31,7 +30,8 @@ import { SocialComponent } from './social/social.component';
   ]
 })
 export class AppComponent {
-  constructor() { }
+  constructor() {
+  }
 
   prepareRoute(outlet: RouterOutlet) {
     return outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];

@@ -21,7 +21,6 @@
     "@angular/platform-browser": "^18.2.8",
     "@angular/platform-browser-dynamic": "^18.2.8",
     "@angular/router": "^18.2.8",
-    "@angular/service-worker": "^18.2.8",
     "jest-editor-support": "*",
     "lottie-web": "^5.12.2",
     "ng-particles": "^3.12.0",

@@ -21,15 +21,14 @@ export class ContactComponent {
         email: formData.email,
         message: formData.message
       };
-
-      this.http.post('/api/contact/send-email', data)
+      
+      this.http.post('api/Mail/send-email', data)
         .subscribe(
           response => {
-        
             alert('Wiadomość została wysłana!');
           },
           error => {
-       
+            console.error(error);
             alert('Wystąpił błąd przy wysyłaniu wiadomości. Spróbuj ponownie później.');
           }
         );
