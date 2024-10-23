@@ -4,6 +4,7 @@ import { AboutComponent } from './about/about.component';
 import { SkillsComponent } from './skills/skills.component';
 import { WorkComponent } from './work/work.component';
 import { ContactComponent } from './contact/contact.component';
+import { SnakeGameComponent } from './GameProject/snake-game/snake-game.component';
 
 export const appRoutes: Routes = [
 
@@ -31,6 +32,11 @@ export const appRoutes: Routes = [
   {
     path: 'contact',
     component: ContactComponent,
+    data: { animation: 'contactPage' }
+  },
+  {
+    path: 'snakeGame',
+    component: SnakeGameComponent,
     data: { animation: 'contactPage' }
   },
   { path: '', redirectTo: '/home', pathMatch: 'full' },

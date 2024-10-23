@@ -1,9 +1,9 @@
 .typewriter {
-  border-right: 2px solid #ffffff; /* Migający kursor */
-  white-space: nowrap; /* Zapobiega łamaniu tekstu */
-  overflow: hidden; /* Ukrywa niepełny tekst */
+  border-right: 2px solid #ffffff;
+  white-space: nowrap; 
+  overflow: hidden; 
   display: inline-block;
-  width: 0; /* Początkowa szerokość */
+  width: 0; 
   animation: typing 4s steps(50, end) forwards, blink-caret 0.75s step-end infinite;
 }
 

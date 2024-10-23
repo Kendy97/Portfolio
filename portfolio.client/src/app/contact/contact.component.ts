@@ -1,8 +1,9 @@
 import { CommonModule, NgIf } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { SocialComponent } from '../social/social.component';
+import { AlertService } from '../service/sweet-alert.service';
 
 @Component({
   selector: 'app-contact',
@@ -12,26 +13,28 @@ import { SocialComponent } from '../social/social.component';
   styleUrls: ['./contact.component.css']
 })
 export class ContactComponent {
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private alertService: AlertService) { }
 
-  onSubmit(formData: any) {
+  onSubmit(formData: any, contactForm: NgForm) {
     if (formData.subject && formData.email && formData.message) {
       const data = {
         subject: formData.subject,
         email: formData.email,
         message: formData.message
       };
-      
+
       this.http.post('api/Mail/send-email', data)
         .subscribe(
           response => {
-            alert('Wiadomość została wysłana!');
+            this.alertService.showSuccess('Success', 'Wiadomość została wysłana!');
+            contactForm.reset();
           },
           error => {
             console.error(error);
-            alert('Wystąpił błąd przy wysyłaniu wiadomości. Spróbuj ponownie później.');
-          }
+            this.alertService.showError('Error', 'Wystąpił błąd przy wysyłaniu wiadomości. Spróbuj ponownie później!');
+         }
         );
+
     }
   }
 }

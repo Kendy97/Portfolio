@@ -1,15 +1,13 @@
+<app-background></app-background>
 
 <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8">
-  <div></div>
-  <div>
+
+  <div class="hidden lg:block"></div>
+  <div class="flex justify-center">
     <app-header></app-header>
   </div>
-  <div>
-
-  </div>
+  <div class="hidden lg:block"></div>
 </div>
-
-<app-background></app-background>
 
 <div class="py-12">
   <div [@routeAnimations]="prepareRoute(outlet)">

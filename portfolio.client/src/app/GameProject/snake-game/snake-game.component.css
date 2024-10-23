@@ -1,0 +1,11 @@
+
+
+canvas {
+  border: 2px solid black;
+  display: block;
+  margin: 20px auto;
+}
+
+select {
+  margin-bottom: 10px;
+}
