@@ -7,15 +7,15 @@ namespace Portfolio.Server.Controllers
     [ApiController]
     public class SnakeScoreController : ControllerBase
     {
-        private readonly SnakeGameService _snakeGameService;
+        private readonly Services.SnakeGameService _snakeGameService;
 
-        // Inicjalizacja serwisu przez wstrzykiwanie zależności (dependency injection)
-        public SnakeScoreController(SnakeGameService snakeGameService)
+     
+        public SnakeScoreController(Services.SnakeGameService snakeGameService)
         {
             _snakeGameService = snakeGameService;
         }
 
-        // Endpoint do przyjmowania danych wyniku od gracza
+
         [HttpPost("addScore")]
         public IActionResult AddScore([FromBody] SnakeScoreDto scoreDto)
         {
@@ -24,15 +24,21 @@ namespace Portfolio.Server.Controllers
                 return BadRequest(ModelState);
             }
 
-            // Wywołanie serwisu, aby dodać wynik do bazy danych
-            int newRecordId = _snakeGameService.InsertScore(scoreDto.Username, scoreDto.Score, scoreDto.TimePlay, scoreDto.Difficulty);
+            _snakeGameService.InsertScore(scoreDto.Username, scoreDto.Score, scoreDto.TimePlay, scoreDto.Difficulty);
 
-            // Zwrócenie ID nowego rekordu jako odpowiedź
-            return Ok(new { RecordId = newRecordId });
+     
+            return Ok();
+        }
+
+        [HttpGet("getScores")]
+        public async Task<IActionResult> GetScores()
+        {
+            var scores = await _snakeGameService.GetScoresAsync();
+            return Ok(scores);
         }
     }
 
-    // DTO (Data Transfer Object) do odbierania danych od klienta (Angular)
+
     public class SnakeScoreDto
     {
         public string Username { get; set; }
@@ -40,5 +46,6 @@ namespace Portfolio.Server.Controllers
         public int TimePlay { get; set; }
         public int Difficulty { get; set; }
     }
+  
 
 }

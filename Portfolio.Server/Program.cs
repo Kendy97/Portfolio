@@ -1,3 +1,5 @@
+using Portfolio.Server.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
@@ -14,7 +16,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddScoped<SnakeGameService>();
 var app = builder.Build();
 
 app.UseDefaultFiles();
