@@ -14,7 +14,7 @@ namespace Portfolio.Server.Services
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public void InsertScore(string username, int score, int timePlay, int difficulty)
+        public void InsertScore(string username, int score, int timePlay, int difficulty, int extraFoodScore, int bonusAmount, int bonusScore)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -27,8 +27,9 @@ namespace Portfolio.Server.Services
                     TimeSpan time = TimeSpan.FromSeconds(timePlay);
                     command.Parameters.AddWithValue("@timePlay", time);
                     command.Parameters.AddWithValue("@difficult", difficulty);
-
-           
+                    command.Parameters.AddWithValue("@extrafood", extraFoodScore);
+                    command.Parameters.AddWithValue("@bonusAmount", bonusAmount);
+                    command.Parameters.AddWithValue("@bonusScore", bonusScore);
                     connection.Open();
                     command.ExecuteNonQuery();
 

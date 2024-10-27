@@ -7,6 +7,9 @@ export interface SnakeScore {
   score: number;
   timePlay: number;
   difficulty: number;
+  extraFoodScore: number;
+  bonusAmount: number;
+  bonusScore: number;
 }
 export interface GetSnakeScore {
   user: string;

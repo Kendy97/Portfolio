@@ -20,7 +20,7 @@ namespace Portfolio.Server.Controllers
                     var smtpClient = new SmtpClient("smtp.webio.pl") 
                     {
                         Port = 587, 
-                        Credentials = new NetworkCredential("Mkedzierski@mkedzierski.com.pl", "Koniczyna!654"), 
+                        Credentials = new NetworkCredential("Mkedzierski@mkedzierski.com.pl", ""), 
                         EnableSsl = false, 
                     };
 

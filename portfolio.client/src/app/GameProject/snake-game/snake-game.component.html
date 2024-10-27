@@ -28,7 +28,7 @@
         </div>
         <div class="flex items-center space-x-4">
           <label for="difficulty" class="text-lg font-medium text-gray-600">Choose Difficulty:</label>
-          <select id="difficulty" [(ngModel)]="difficulty" (change)="changeDifficulty(difficulty)"
+          <select id="difficulty" [(ngModel)]="difficulty" (change)="changeDifficulty($event)"
                   class="border border-gray-300 rounded-md px-4 py-2 text-lg">
             <option value="2">Normal</option>
             <option value="3">Fast</option>
@@ -55,13 +55,7 @@
         </button>
 
 
-        <div *ngIf="isCountingDown" class="flex-col gap-4 w-full flex items-center justify-center">
-          <div class=" border-transparent text-blue-400 text-4xl flex items-center justify-center border-t-blue-400 rounded-full">
-            <p>Game starts in: {{ countdown }}</p>
-
-          </div>
-        </div>
-
+   
         <canvas id="gameCanvas" width="600" height="600" class="border-2 border-gray-700 rounded-lg shadow-lg">
         </canvas>
       </div>
@@ -75,10 +69,17 @@
         <dt class="order-last text-lg font-medium text-gray-500">Score:</dt>
         <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">{{ score }}</dd>
       </dl>
+      <dl class="flex flex-col items-center rounded-lg bg-purple-400 px-4 py-8 text-center shadow-md">
+        <dt class="order-last text-lg font-medium text-green-800">Bonus Score:</dt>
+        <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">{{ bonusScore }}</dd>
+      </dl>
+      <dl class="flex flex-col items-center rounded-lg bg-lime-300 px-4 py-8 text-center shadow-md">
+        <dt class="order-last text-lg font-medium text-green-800">Extra food:</dt>
+        <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">{{ extraFoodScore }}</dd>
+      </dl>
     </div>
   </div>
 </div>
-
 
 
 

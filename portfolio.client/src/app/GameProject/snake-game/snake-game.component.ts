@@ -18,35 +18,48 @@ import { HighScoreComponent } from '../high-score/high-score.component';
 export class SnakeGameComponent  {
   canvas: HTMLCanvasElement | null = null; 
   ctx: CanvasRenderingContext2D | null = null; 
-  snake: any[] = [{ x: 10, y: 10 }];
+  snake: any[] = [{ x: 8, y: 8 }];
   food: any[] = [];
   gridSize = 15;
   tileSize = 40;
   velocity = { x: 0, y: 0 };
   gameOver = false;
   score = 0;
-  difficulty = 1;
+  difficulty: number = 1; 
   numberOfFoods = 2;
-  countdown: number = 3;
-  isCountingDown: boolean = false;
   username: string = '';
-  chiliImage = new Image(); 
-  snakeHeadImage = new Image();
   offsetX = 0;
   offsetY = 0;
+  lastFoodTime: number = Date.now();
+  backgroundDrawn: boolean = false;
+  backgroundImage: HTMLImageElement | null = null; 
+  gameStarted: boolean = false;
+  chiliImage = new Image();
+  extraFoodImage = new Image();
+  extraFood: { x: number, y: number } | null = null;
+  extraFoodTimer: any = null;
+  extraFoodSpawnInterval: any = null;
+  extraFoodScore: number = 0;
+  snakeHeadImage = new Image();
+  bonusScore: number = 0;
+  bonusAmount: number = 0;
 
   @ViewChild('highscore') highscore!: HighScoreComponent;
   constructor(private alertService: AlertService, private snakeScoreService: SnakeScoreService) {
-    this.chiliImage.src = 'assets/chili.png';
+    this.chiliImage.src = 'assets/pizza.png';
     this.snakeHeadImage.src = 'assets/snake.png';
-}
+    this.extraFoodImage.src = 'assets/chili.png';
+  }
 
   submitScore() {
     const score: SnakeScore = {
       username: this.username,  
       score: this.score,           
       timePlay: 300,      
-      difficulty: this.difficulty        
+      difficulty: this.difficulty,
+      extraFoodScore: this.extraFoodScore,
+      bonusAmount: this.bonusAmount,
+      bonusScore: this.bonusScore
     };
 
     this.snakeScoreService.addScore(score).subscribe(
@@ -63,44 +76,87 @@ export class SnakeGameComponent  {
     const usernameInput = (document.getElementById('username') as HTMLInputElement).value;
     if (usernameInput) {
       this.username = usernameInput;
-      this.isCountingDown = true;
-      this.countdown = 3;
-      const countdownInterval = setInterval(() => {
-        this.countdown--;
-        if (this.countdown === 0) {
-          clearInterval(countdownInterval);
-          this.isCountingDown = false;
-          this.initGame();
-        }
-      }, 1000);
+      this.drawBackground(); 
+      this.initGame();
     }
     else {
       this.alertService.showAlert('Proszę wprowadzić swoją nazwę!', '');
       return;
     }
   }
-
   initGame(): void {
     this.canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
     if (this.canvas) {
       this.ctx = this.canvas.getContext('2d');
     }
+    if (!this.backgroundDrawn) {
+      this.drawBackground();
+    }
+
     this.resetGame();
-    this.drawBackground();  
-    this.updateGame();
+
+    if (this.snake.length > 1) {
+      console.log("Snake initialized correctly:", this.snake);
+    } else {
+      console.error("Snake initialization failed or snake is too short.");
+      return;
+    }
+
+    if (this.ctx) {
+      this.clearCanvas();
+      this.drawSnake();
+      this.drawFood();
+    }
+
+    this.extraFoodSpawnInterval = setInterval(() => {
+      if (!this.extraFood) {
+        this.spawnExtraFood();
+      }
+    }, 10000);
   }
-
-
   resetGame(): void {
-    this.snake = [{ x: 10, y: 10 }];
-    this.velocity = { x: 1, y: 0 };
+    this.snake = [
+      { x: 8, y: 8 }, 
+      { x: 8, y: 7 }, 
+    ];
+    this.velocity = { x: 0, y: 0 };
     this.spawnFood();
     this.score = 0;
     this.gameOver = false;
-  }
+    this.lastFoodTime = Date.now();
+    this.gameStarted = false;
+    this.extraFoodScore = 0;
+    this.bonusAmount = 0;
+    this.bonusScore = 0;
 
+    if (this.extraFoodTimer) {
+      clearTimeout(this.extraFoodTimer);
+      this.extraFoodTimer = null;
+    }
+    if (this.extraFoodSpawnInterval) {
+      clearInterval(this.extraFoodSpawnInterval);
+      this.extraFoodSpawnInterval = null;
+    }
+    this.extraFood = null;
+  }
+  endGame(): void {
+    this.gameOver = true;
+
+    if (this.extraFoodTimer) {
+      clearTimeout(this.extraFoodTimer);
+      this.extraFoodTimer = null;
+    }
+    if (this.extraFoodSpawnInterval) {
+      clearInterval(this.extraFoodSpawnInterval);
+      this.extraFoodSpawnInterval = null;
+    }
+    this.alertService.showSuccess('Gratulacje', ' Twój wynik to: ' + this.score);
+
+    this.submitScore();
+    this.highscore.update();
+  }
   spawnFood(): void {
-    this.food = []; 
+    this.food = [];
     for (let i = 0; i < this.numberOfFoods; i++) {
       this.food.push({
         x: Math.floor(Math.random() * this.gridSize),
@@ -108,48 +164,48 @@ export class SnakeGameComponent  {
       });
     }
   }
+  spawnExtraFood(): void {
+
+    this.extraFood = {
+      x: Math.floor(Math.random() * this.gridSize),
+      y: Math.floor(Math.random() * this.gridSize)
+    };
+    this.extraFoodTimer = setTimeout(() => {
+      this.extraFood = null;
+    }, 5000);
+  }
   drawBackground(): void {
-    if (this.ctx && !this.gameOver) {
-      const backgroundImage = document.createElement('canvas');
-      backgroundImage.width = this.canvas!.width;
-      backgroundImage.height = this.canvas!.height;
-      const backgroundCtx = backgroundImage.getContext('2d');
+    if (this.ctx && !this.backgroundDrawn) {
+      const offscreenCanvas = document.createElement('canvas');
+      offscreenCanvas.width = this.canvas!.width;
+      offscreenCanvas.height = this.canvas!.height;
+      const offscreenCtx = offscreenCanvas.getContext('2d');
 
       for (let x = 0; x < this.gridSize; x++) {
         for (let y = 0; y < this.gridSize; y++) {
-          backgroundCtx!.fillStyle = (x + y) % 2 === 0 ? '#333333' : '#444444';
-          backgroundCtx!.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
+          offscreenCtx!.fillStyle = (x + y) % 2 === 0 ? '#333333' : '#444444';
+          offscreenCtx!.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
         }
       }
-      this.ctx.drawImage(backgroundImage, 0, 0);
+      const dataURL = offscreenCanvas.toDataURL();
+      this.backgroundImage = new Image();
+      this.backgroundImage.src = dataURL;
+      this.ctx.drawImage(this.backgroundImage, 0, 0);
+
+      this.backgroundDrawn = true;
     }
   }
-
-
-
   updateGame(): void {
     if (this.gameOver) return;
 
     this.moveSnake();
-    this.drawSnake();
     if (this.isCollision()) {
-      this.gameOver = true;
-      if (this.score >= 100) {
-        this.alertService.showSuccess('Gratulacje', ' Twój wynik to: ' + this.score);
-      }
-      else {
-        this.alertService.showSuccess('Spróbuj ponownie!', 'Twój wynik to: ' + this.score);
-      }
-
-      this.submitScore();
-      this.highscore.update();
+      this.endGame();
       return;
     }
 
     if (this.ctx) {
       this.clearCanvas();
-      this.drawSnake();
-      this.drawBackground();
       this.drawSnake();
       this.drawFood();
     }
@@ -160,16 +216,39 @@ export class SnakeGameComponent  {
       }
     });
 
+    if (this.extraFood && this.snake[0].x === this.extraFood.x && this.snake[0].y === this.extraFood.y) {
+      this.eatExtraFood();
+      
+    }
+
     if (this.food.length === 0) {
       this.spawnFood();
     }
 
     setTimeout(() => requestAnimationFrame(() => this.updateGame()), 300 / (this.difficulty));
- 
   }
+  eatExtraFood(): void {
 
+    this.score += 200;
+    this.extraFoodScore +=1
+    const segmentsToRemove = Math.min(3, this.snake.length - 3);
+    for (let i = 0; i < segmentsToRemove; i++) {
+      this.snake.pop();
+    }
+    if (this.snake.length < 1) {
+      this.endGame();
+      return;
+    }
+    this.extraFood = null;
 
+    if (this.extraFoodTimer) {
+      clearTimeout(this.extraFoodTimer);
+      this.extraFoodTimer = null;
+    }
+  }
   moveSnake(): void {
+    if (this.velocity.x === 0 && this.velocity.y === 0) return; 
+
     const head = {
       x: this.snake[0].x + this.velocity.x,
       y: this.snake[0].y + this.velocity.y
@@ -177,7 +256,6 @@ export class SnakeGameComponent  {
     this.snake.unshift(head);
     this.snake.pop();
   }
-
   isCollision(): boolean {
     const head = this.snake[0];
     if (head.x < 0 || head.x >= this.gridSize || head.y < 0 || head.y >= this.gridSize) {
@@ -193,6 +271,17 @@ export class SnakeGameComponent  {
     return false;
   }
   eatFood(index: number): void {
+    const currentTime = Date.now();
+    const timeDifference = (currentTime - this.lastFoodTime) / 1000; 
+    if (timeDifference < 1) {
+      this.score += 25;
+      this.bonusAmount += 1;
+      this.bonusScore += 25
+      this.showBonusEffect(); 
+    }
+
+    this.lastFoodTime = currentTime;
+
     if (this.difficulty === 2) {
       this.score += 10 * 4;
     } else if (this.difficulty === 3) {
@@ -210,79 +299,162 @@ export class SnakeGameComponent  {
     this.snake.push({});
     this.food.splice(index, 1);
   }
+  showBonusEffect(): void {
+    if (!this.ctx) return;
+
+    const bonusText = "Extra bonus +25 pkt";
+    const duration = 500; 
+    const startTime = Date.now();
+
+
+    const animateBonus = () => {
+      const currentTime = Date.now();
+      const elapsed = currentTime - startTime;
+      if (elapsed > duration) {
+        this.clearCanvas();
+        return;
+      }
+      const borderColor = `rgba(204, 255, 204, ${Math.abs(Math.sin(elapsed / 200))})`; 
+      this.ctx!.strokeStyle = borderColor;
+      this.ctx!.lineWidth = 10;
+      this.ctx!.strokeRect(5, 5, this.canvas!.width - 10, this.canvas!.height - 10);
+
+      this.ctx!.font = "30px Arial";
+      this.ctx!.fillStyle = borderColor;
+      this.ctx!.textAlign = "center";
+      this.ctx!.fillText(bonusText, this.canvas!.width / 2, this.canvas!.height / 2);
+
+      requestAnimationFrame(animateBonus); 
+    };
+
+
+    animateBonus();
+
+    setTimeout(() => this.clearCanvas(), duration);
+  }
   clearCanvas(): void {
-    if (this.ctx) {
-      this.ctx.clearRect(0, 0, this.canvas!.width, this.canvas!.height);
+    if (this.ctx && this.backgroundImage) {
+   
+      this.ctx.drawImage(this.backgroundImage, 0, 0);
     }
   }
   drawSnake(): void {
     if (!this.ctx) return;
+
+    if (!this.snake || this.snake.length < 2) {
+      return;
+    }
+
+    this.ctx!.strokeStyle = '#32CD32';
+    this.ctx!.lineWidth = this.tileSize * 0.7;
+    this.ctx!.lineCap = 'round';
+
+
+    this.ctx!.beginPath();
+    this.ctx!.moveTo(
+      this.snake[0].x * this.tileSize + this.tileSize / 2,
+      this.snake[0].y * this.tileSize + this.tileSize / 2
+    );
+
+
+    this.snake.slice(1).forEach((part, index) => {
+      const offset = index % 2 === 0 ? 1.5 : -1.5; 
+      this.ctx!.lineTo(
+        part.x * this.tileSize + this.tileSize / 2 + offset,
+        part.y * this.tileSize + this.tileSize / 2 + offset
+      );
+    });
+
+    this.ctx!.stroke(); 
     const head = this.snake[0];
     this.ctx!.save();
     this.ctx!.translate(
-      (head.x * this.tileSize) + this.offsetX + this.tileSize / 2,
-      (head.y * this.tileSize) + this.offsetY + this.tileSize / 2
+      (head.x * this.tileSize) + this.tileSize / 2,
+      (head.y * this.tileSize) + this.tileSize / 2
     );
 
-  
     if (this.velocity.x === 1) {
-      this.ctx!.rotate(-Math.PI / 2); 
+      this.ctx!.rotate(-Math.PI / 2);
     } else if (this.velocity.x === -1) {
-      this.ctx!.rotate(Math.PI / 2); 
+      this.ctx!.rotate(Math.PI / 2);
     } else if (this.velocity.y === -1) {
-      this.ctx!.rotate(Math.PI); 
+      this.ctx!.rotate(Math.PI);
     } else if (this.velocity.y === 1) {
-      this.ctx!.rotate(0); 
+      this.ctx!.rotate(0);
     }
 
-    this.ctx!.drawImage(this.snakeHeadImage, -this.tileSize / 2, -this.tileSize / 2, this.tileSize, this.tileSize);
+    const headSize = this.tileSize * 1.5; 
+    this.ctx!.drawImage(
+      this.snakeHeadImage,
+      -headSize / 2,
+      -headSize / 2,
+      headSize,
+      headSize
+    );
     this.ctx!.restore();
-
-    this.ctx.fillStyle = '#32CD32'; 
-    this.snake.slice(1).forEach((part, index) => {
-      this.ctx!.beginPath();
-      this.ctx!.arc(
-        part.x * this.tileSize + this.tileSize / 2,
-        part.y * this.tileSize + this.tileSize / 2,
-        this.tileSize / 2 - 2,
-        0,
-        Math.PI * 2
-      );
-      this.ctx!.fill();
-      this.ctx!.closePath();
-    });
   }
-
   drawFood(): void {
     if (this.ctx) {
       this.food.forEach(f => {
         this.ctx!.drawImage(this.chiliImage, f.x * this.tileSize, f.y * this.tileSize, this.tileSize, this.tileSize);
       });
-    }
 
+      if (this.extraFood) {
+
+        if (this.extraFoodImage.complete) {
+          this.ctx!.drawImage(this.extraFoodImage, this.extraFood.x * this.tileSize, this.extraFood.y * this.tileSize, this.tileSize, this.tileSize);
+        } else {
+          this.ctx!.fillStyle = 'gold';
+          this.ctx!.fillRect(this.extraFood.x * this.tileSize, this.extraFood.y * this.tileSize, this.tileSize, this.tileSize);
+        }
+      }
+    }
   }
 
   @HostListener('window:keydown', ['$event'])
   handleKeyPress(event: KeyboardEvent): void {
-    switch (event.key) {
-      case 'ArrowUp':
-        if (this.velocity.y === 0) this.velocity = { x: 0, y: -1 };
-        break;
-      case 'ArrowDown':
-        if (this.velocity.y === 0) this.velocity = { x: 0, y: 1 };
-        break;
-      case 'ArrowLeft':
-        if (this.velocity.x === 0) this.velocity = { x: -1, y: 0 };
-        break;
-      case 'ArrowRight':
-        if (this.velocity.x === 0) this.velocity = { x: 1, y: 0 };
-        break;
+    if (!this.gameStarted) {
+      switch (event.key) {
+        case 'ArrowUp':
+          this.velocity = { x: 0, y: -1 };
+          break;
+        case 'ArrowDown':
+          this.velocity = { x: 0, y: 1 };
+          break;
+        case 'ArrowLeft':
+          this.velocity = { x: -1, y: 0 };
+          break;
+        case 'ArrowRight':
+          this.velocity = { x: 1, y: 0 };
+          break;
+        default:
+          return;
+      }
+      this.gameStarted = true;
+      this.updateGame();
+    } else {
+
+      switch (event.key) {
+        case 'ArrowUp':
+          if (this.velocity.y === 0) this.velocity = { x: 0, y: -1 };
+          break;
+        case 'ArrowDown':
+          if (this.velocity.y === 0) this.velocity = { x: 0, y: 1 };
+          break;
+        case 'ArrowLeft':
+          if (this.velocity.x === 0) this.velocity = { x: -1, y: 0 };
+          break;
+        case 'ArrowRight':
+          if (this.velocity.x === 0) this.velocity = { x: 1, y: 0 };
+          break;
+      }
     }
   }
-  changeDifficulty(newDifficulty: number): void {
-    this.difficulty = newDifficulty;
+  changeDifficulty(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.difficulty = parseInt(value, 10);
     this.resetGame();
-    this.initGame();
   }
+
 }
 

@@ -24,7 +24,7 @@ namespace Portfolio.Server.Controllers
                 return BadRequest(ModelState);
             }
 
-            _snakeGameService.InsertScore(scoreDto.Username, scoreDto.Score, scoreDto.TimePlay, scoreDto.Difficulty);
+            _snakeGameService.InsertScore(scoreDto.Username, scoreDto.Score, scoreDto.TimePlay, scoreDto.Difficulty,scoreDto.extraFoodScore,scoreDto.bonusAmount,scoreDto.bonusScore);
 
      
             return Ok();
@@ -45,6 +45,10 @@ namespace Portfolio.Server.Controllers
         public int Score { get; set; }
         public int TimePlay { get; set; }
         public int Difficulty { get; set; }
+        public int extraFoodScore { get; set; }
+        public int bonusAmount { get; set; }
+        public int bonusScore { get; set; }
+
     }
   
 
