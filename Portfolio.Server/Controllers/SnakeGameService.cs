@@ -8,12 +8,10 @@ namespace Portfolio.Server.Services
     {
         private readonly string _connectionString;
 
-        // Konstruktor z wstrzykiwaniem IConfiguration
         public SnakeGameService(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
-
         public void InsertScore(string username, int score, int timePlay, int difficulty, int extraFoodScore, int bonusAmount, int bonusScore)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -36,7 +34,6 @@ namespace Portfolio.Server.Services
                 }
             }  
         }
-
         public async Task<List<SnakeScoreDto>> GetScoresAsync()
         {
             var scores = new List<SnakeScoreDto>();
@@ -44,7 +41,7 @@ namespace Portfolio.Server.Services
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 string query = @"
-                    SELECT TOP 25
+                    SELECT TOP 20
                         [sc_UserName] AS 'User',
                         [sc_Score] AS 'Score',
                         [sc_Difficult] AS 'Difficult',
